@@ -1,0 +1,11 @@
+{
+  "$schema": "https://github.com/hasa-codeagent/keybindings.schema.json",
+  "comment": "HASA TUI keybindings — edit keys, restart `hasa`. Modifier: ctrl | none.",
+  "bindings": [
+    { "action": "newSession", "key": "ctrl+n", "description": "Start a new session (clears chat)" },
+    { "action": "modelPicker", "key": "ctrl+m", "description": "Toggle the free-model picker" },
+    { "action": "commandPalette", "key": "ctrl+k", "description": "Open the command palette" },
+    { "action": "quit", "key": "ctrl+c", "description": "Quit the TUI" },
+    { "action": "submit", "key": "enter", "description": "Send the current input" }
+  ]
+}

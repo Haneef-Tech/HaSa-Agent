@@ -1,0 +1,16 @@
+node_modules/
+dist/
+out/
+*.tsbuildinfo
+*.vsix
+.env
+.env.local
+.vscode-test/
+# BYOK keys — NEVER commit real keys
+packages/core/config.local.json
+**/.codeagent/
+~/.codeagent/
+*.log
+.DS_Store
+Thumbs.db
+coverage/

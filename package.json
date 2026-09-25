@@ -1,0 +1,30 @@
+{
+  "name": "hasa-codeagent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HASA / CodeAgent — local-first AI coding agent (shared core + TUI + VS Code extension, BYOK free-model routing)",
+  "type": "module",
+  "workspaces": [
+    "packages/core",
+    "packages/cli",
+    "packages/vscode-ext"
+  ],
+  "scripts": {
+    "build": "npm run build -w hasa-core && npm run build -w hasa-agent && npm run build -w hasa-vscode-ext",
+    "build:core": "npm run build -w hasa-core",
+    "build:cli": "npm run build -w hasa-agent",
+    "build:ext": "npm run build -w hasa-vscode-ext",
+    "test": "npm run test --workspaces",
+    "lint": "npx tsc --noEmit -p tsconfig.json",
+    "dev:cli": "npm run dev -w hasa-agent",
+    "package:vsix": "npm run package -w hasa-vscode-ext"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

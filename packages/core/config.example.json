@@ -1,0 +1,18 @@
+{
+  "provider": "nara",
+  "model": "ling-3.0-flash-sante-free",
+  "apiKeys": {
+    "nara": "PASTE-YOUR-NARA-KEY-HERE"
+  },
+  "providers": {
+    "openai-compatible": {
+      "baseUrl": "https://your-custom-router-host/v1",
+      "apiKey": "PASTE-KEY-HERE"
+    }
+  },
+  "permissions": {
+    "defaultPolicy": "ask",
+    "alwaysAllow": [],
+    "alwaysDeny": ["rm -rf /*", "format C:"]
+  }
+}
