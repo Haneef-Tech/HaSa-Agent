@@ -1,11 +1,14 @@
 import type { JsonSchema } from "../types.js";
 import type { PermissionGate } from "../permissions/gate.js";
+import type { ProcessManager } from "../runtime/processManager.js";
 
 export interface ToolContext {
   cwd: string;
   gate: PermissionGate;
   /** Ask UI to confirm a diff before writing. Returns true if approved. */
   confirmDiff?: (file: string, diff: string) => Promise<boolean>;
+  /** Long-running process table. Falls back to a global singleton when omitted. */
+  processes?: ProcessManager;
 }
 
 export interface ToolResult {

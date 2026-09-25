@@ -33,7 +33,8 @@ export async function runAgent(userInput: string, history: ChatMessage[], opts: 
   const specs = toToolSpecs();
   const systemPrompt = buildSystemPrompt(opts.systemExtra);
   const messages: ChatMessage[] = [...history, { role: "user", content: userInput }];
-  const maxSteps = opts.maxSteps ?? 12;
+  // Run-fix-verify loops need more steps than plain Q&A (detect → install → start → logs → fix → verify).
+  const maxSteps = opts.maxSteps ?? 20;
   let lastText = "";
 
   for (let step = 0; step < maxSteps; step++) {

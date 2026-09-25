@@ -34,6 +34,12 @@ async function fetchModels(): Promise<{ provider: string; model: string; models:
   return { provider: cfg.provider, model: cfg.model, models: show };
 }
 
+// Legacy conhost (plain cmd.exe) repaints the whole screen buffer on every
+// render, so animated spinners + large redraws visibly shake. Windows Terminal
+// sets WT_SESSION and VS Code sets TERM_PROGRAM=vscode — both handle ANSI well.
+const isLegacyConsole =
+  process.platform === "win32" && !process.env["WT_SESSION"] && process.env["TERM_PROGRAM"] !== "vscode";
+
 export function App(): React.JSX.Element {
   const { exit } = useApp();
   const { stdin, setRawMode } = useStdin();
@@ -124,13 +130,17 @@ export function App(): React.JSX.Element {
               }),
           },
           events: {
+            // Status line only on start — appending a message per tool start
+            // doubles re-renders and shakes the screen on Windows consoles.
             onToolStart: (c) => {
               setCurrentTool(c.name);
-              setMessages((m) => [...m, { role: "tool", content: `running ${c.name}…`, name: c.name }]);
             },
             onToolEnd: (c, out, ok) => {
               setCurrentTool(null);
-              setMessages((m) => [...m, { role: "tool", content: `[${c.name} ${ok ? "ok" : "failed"}] ${out.slice(0, 2000)}`, name: c.name }]);
+              // One collapsed line per tool. Full output stays in the session transcript.
+              const firstLine = out.split("\n")[0]?.slice(0, 300) ?? "";
+              const summary = firstLine.length < out.length ? `${firstLine}…` : firstLine;
+              setMessages((m) => [...m, { role: "tool", content: `[${c.name} ${ok ? "ok" : "failed"}] ${summary}`, name: c.name }]);
             },
           },
         });
@@ -194,7 +204,8 @@ export function App(): React.JSX.Element {
     <Box flexDirection="column" padding={1}>
       <Text bold color="magenta">HASA — coding agent ({provider}/{model})</Text>
       <Box borderStyle="single" flexDirection="column" paddingX={1}>
-        <ChatPane messages={messages.slice(-25)} />
+        {/* Smaller repaint area under legacy cmd = less shake. */}
+        <ChatPane messages={messages.slice(isLegacyConsole ? -12 : -25)} />
       </Box>
       {showModels && <ModelPicker models={models} active={model} />}
       {pendingDiff && (
@@ -212,7 +223,8 @@ export function App(): React.JSX.Element {
       <Box marginTop={1}>
         {busy ? (
           <Box>
-            <Spinner />
+            {/* No animation timer under legacy cmd: static dots, zero extra repaints. */}
+            {isLegacyConsole ? <Text color="yellow">…</Text> : <Spinner />}
             <Text color="yellow">{currentTool ? ` building with ${currentTool}…` : " thinking…"}</Text>
           </Box>
         ) : (
